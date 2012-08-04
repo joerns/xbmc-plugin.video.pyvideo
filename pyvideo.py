@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import xbmcplugin, xbmcgui
+import xbmcplugin, xbmcgui, xbmcaddon
 
 import urlparse, urllib2
 import json
@@ -37,6 +37,15 @@ VIDEO_URL = "http://pyvideo.org/api/v1/video/{id}/"
 YOUTUBE_URL = 'plugin://plugin.video.youtube?path=/root/video&action=play_video&videoid={ID}'
 
 FORMATS = ['ogv', 'webm', 'mp4', 'flv']
+
+
+language = xbmcaddon.Addon(id='plugin.video.pyvideo').getLocalizedString
+
+strings = { 'allvideos': language(30001),
+	    'conferences': language(30002),
+	    'speakers': language(30003),
+	    'tags': language(30004)
+	    }
 
 # ------------------------------------------------------------
 
@@ -103,10 +112,10 @@ except:
     path = '/'
 
 if path == '/':
-    addDir("All Videos", "/all_videos/", 1, "")
-    addDir("Conferences", "/conferences/", 1, "")
-    addDir("Speakers", "/speakers/", 1, "")
-    addDir("Tags", "/tags/", 1, "")
+    addDir(strings['allvideos'], "/all_videos/", 1, "")
+    addDir(strings['conferences'], "/conferences/", 1, "")
+    addDir(strings['speakers'], "/speakers/", 1, "")
+    addDir(strings['tags'], "/tags/", 1, "")
 
 elif path == '/all_videos/':
     all_videos_string = urllib2.urlopen(ALL_VIDEOS_URL).read()
