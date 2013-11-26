@@ -5,9 +5,9 @@
     name="PyVideo"
     provider-name="nevermore">
   <requires>
-    <import addon="xbmc.python" version="2.0"/>
-    <import addon="plugin.video.youtube" version="2.0.0"/>
-    <import addon="script.module.beautifulsoup" version="3.2.0"/>
+    <import addon="xbmc.python" version="2.1.0"/>
+    <import addon="plugin.video.youtube" />
+    <import addon="script.module.beautifulsoup" />
   </requires>
 
   <extension point="xbmc.python.pluginsource" library="pyvideo.py">

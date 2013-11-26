@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import xbmcplugin, xbmcgui, xbmcaddon
+import xbmcplugin, xbmcgui, xbmcaddon, xbmc
 
 import urlparse, urllib2
 import json
@@ -25,13 +25,13 @@ from BeautifulSoup import BeautifulSoup
 
 # ------------------------------------------------------------
 
-ALL_VIDEOS_URL = "http://pyvideo.org/api/v1/video/?limit=0"
-CONFERENCES_URL = "http://pyvideo.org/api/v1/category/?limit=0"
-CONFERENCE_URL = "http://pyvideo.org/api/v1/category/{id}/?limit=0"
-SPEAKERS_URL = "http://pyvideo.org/api/v1/speaker/?limit=0"
-SPEAKER_URL = "http://pyvideo.org/api/v1/speaker/{id}/?limit=0"
-TAGS_URL = "http://pyvideo.org/api/v1/tag/?limit=0"
-TAG_URL = "http://pyvideo.org/api/v1/tag/{id}/?limit=0"
+ALL_VIDEOS_URL = "http://pyvideo.org/api/v1/video/"
+CONFERENCES_URL = "http://pyvideo.org/api/v1/category/"
+CONFERENCE_URL = "http://pyvideo.org/api/v1/category/{id}"
+SPEAKERS_URL = "http://pyvideo.org/api/v1/speaker/"
+SPEAKER_URL = "http://pyvideo.org/api/v1/speaker/{id}"
+TAGS_URL = "http://pyvideo.org/api/v1/tag/"
+TAG_URL = "http://pyvideo.org/api/v1/tag/{id}/"
 VIDEO_URL = "http://pyvideo.org/api/v1/video/{id}/"
 
 YOUTUBE_URL = 'plugin://plugin.video.youtube?path=/root/video&action=play_video&videoid={id}'
@@ -55,9 +55,9 @@ def addLink(name, url, iconimage, max_elems, info):
     li.setInfo( type="Video", infoLabels=info )
     xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=url,listitem=li, isFolder=False, totalItems=max_elems)
     
-def addDir(name,path,page,iconimage):
+def addDir(name,path,page,iconimage="DefaultFolder.png"):
     u=sys.argv[0]+"?path=%s&page=%s"%(path,str(page))
-    li=xbmcgui.ListItem(name, iconImage="DefaultFolder.png",thumbnailImage=iconimage)
+    li=xbmcgui.ListItem(name, iconImage=iconimage,thumbnailImage=iconimage)
     li.setInfo( type="Video", infoLabels={ "Title": name })
     xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=li,isFolder=True)
 
@@ -86,10 +86,9 @@ def add_video(video, max_elems):
         'Title': video['title'],
         'Plot': html_to_text(video['summary']),
         'PlotOutline': html_to_text(video['description']).replace('\n', ' '),
-        'Date': str(video['recorded'])
         }
     url = resolve_content_url(video)
-    thumb = video['thumbnail_url']
+    thumb = video['thumbnail_url'] if video['thumbnail_url'] else "DefaultVideo.png"
     if url:
         addLink(info['Title'], url, thumb, max_elems, info)
 
@@ -131,7 +130,7 @@ elif path == '/conferences/':
     conferences_string = urllib2.urlopen(CONFERENCES_URL).read()
     conferences = json.loads(conferences_string)
     for conference in conferences['objects']:
-        addDir(conference['title'], '/conference/%s/'%conference['id'], 1, "")
+        addDir(conference['title'], '/conference/%s/'%conference['id'], 1)
         
 elif path.startswith('/conference/'):
     id = path.split('/')[2]
@@ -144,7 +143,7 @@ elif path == '/speakers/':
     speakers_string = urllib2.urlopen(SPEAKERS_URL).read()
     speakers = json.loads(speakers_string)
     for speaker in speakers['objects']:
-        addDir(speaker['name'], '/speaker/%s/'%speaker['id'], 1, "")
+        addDir(speaker['name'], '/speaker/%s/'%speaker['id'], 1)
 
 elif path.startswith('/speaker/'):
     id = path.split('/')[2]
